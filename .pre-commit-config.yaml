@@ -1,0 +1,28 @@
+default_language_version:
+  python: python3.11
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        alias: autoformat
+        exclude: ^.*\b(migrations|asgi\.py|wsgi\.py|manage\.py)\b.*$
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.185
+    hooks:
+      - id: ruff
+        alias: autoformat
+        exclude: ^.*\b(migrations|asgi\.py|wsgi\.py|manage\.py)\b.*$
