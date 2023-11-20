@@ -19,7 +19,6 @@
 * Entry
   - Tied to a specific team & specific members
   - Tied to a repository
-  - Maybe this is actually just the repo?
 * Invites
   - Sent from a team owner
   - To an email (not a already-registered account)
@@ -30,10 +29,8 @@
 
 ## During Competition
 
-* Repository
-  - Tied to a `Competition`
-  - Tied to an `Entry`
 * Commits
+  - Tied to an `Entry`
 
 
 ## During Judging

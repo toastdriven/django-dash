@@ -1,16 +1,16 @@
 from django.contrib import admin
 
 from .models import (
-    Repository,
+    Entry,
     Commit,
 )
 
 
-class RepositoryAdmin(admin.ModelAdmin):
+class EntryAdmin(admin.ModelAdmin):
     date_hierarchy = "created"
     list_display = [
-        "team",
         "name",
+        "team",
         "url",
         "competition",
         "is_deleted",
@@ -22,6 +22,7 @@ class RepositoryAdmin(admin.ModelAdmin):
     raw_id_fields = [
         "competition",
         "team",
+        "team_members",
     ]
     search_fields = [
         "name",
@@ -36,20 +37,20 @@ class CommitAdmin(admin.ModelAdmin):
         "commit_id",
         "email",
         "message",
-        "repository",
+        "entry",
         "created",
     ]
     list_filter = []
     raw_id_fields = [
-        "repository",
+        "entry",
         "committer",
     ]
     search_fields = [
-        "repository__name",
+        "entry__name",
         "email",
         "message",
     ]
 
 
-admin.site.register(Repository, RepositoryAdmin)
+admin.site.register(Entry, EntryAdmin)
 admin.site.register(Commit, CommitAdmin)

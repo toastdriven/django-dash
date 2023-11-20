@@ -51,7 +51,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "competitions",
-    "repositories",
+    "entries",
+    "invites",
+    "judging",
+    "sponsors",
     "teams",
 ]
 

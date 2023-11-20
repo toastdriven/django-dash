@@ -2,9 +2,7 @@ import hashlib
 import random
 
 
-VALID_CHOICES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split(
-    ""
-)
+VALID_CHOICES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split()
 
 
 def generate_code(choices=VALID_CHOICES, length=16):

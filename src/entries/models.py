@@ -13,28 +13,33 @@ from utils.querysets import ActiveQuerySet
 User = get_user_model()
 
 
-class ActiveRepositoryQuerySet(ActiveQuerySet):
+class ActiveEntryQuerySet(ActiveQuerySet):
     pass
 
 
-class Repository(models.Model):
+class Entry(models.Model):
     competition = models.ForeignKey(
         Competition,
-        related_name="repositories",
+        related_name="entries",
         on_delete=models.CASCADE,
     )
     team = models.ForeignKey(
         Team,
-        related_name="repositories",
+        related_name="entries",
         on_delete=models.CASCADE,
     )
+    team_members = models.ManyToManyField(
+        TeamMember,
+        related_name="entries",
+    )
     name = models.CharField(max_length=64)
-    url = models.URLField(db_index=True)
+    description = models.TextField(blank=True, default="")
+    repository_url = models.URLField(blank=True, null=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
 
-    objects = ActiveRepositoryQuerySet.as_manager()
+    objects = ActiveEntryQuerySet.as_manager()
 
     def __str__(self):
         return (
@@ -48,8 +53,8 @@ class Repository(models.Model):
 
 
 class Commit(models.Model):
-    repository = models.ForeignKey(
-        Repository,
+    entry = models.ForeignKey(
+        Entry,
         related_name="commits",
         on_delete=models.CASCADE,
     )

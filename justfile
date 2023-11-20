@@ -21,6 +21,12 @@ setup:
     cd frontend && \
     NODE_ENV='development' npm run dev
 
+@recreate-db:
+    docker compose stop db
+    docker volume rm django-dash_postgres-data
+    docker compose run --rm web bash -c "createdb -U postgres -h db -p 5432 django-dash"
+    docker compose run --rm web bash -c "pipenv run src/manage.py migrate"
+
 @console:
     docker compose run --rm web bash
 

@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from teams.models import Team
+from teams.models import (
+    Team,
+)
 
 from utils import codes
 
@@ -38,3 +40,13 @@ class Invite(models.Model):
             self.accept_code = codes.generate_code()
 
         return super().save(*args, **kwargs)
+
+    def accept(self):
+        self.accepted = True
+        self.save()
+
+        # FIXME: Create a TeamMember out of this.
+
+    def reject(self):
+        self.accepted = False
+        return self.save()
