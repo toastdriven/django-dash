@@ -1,3 +1,5 @@
 .git
 
+.ruff_cache
+
 frontend/node_modules

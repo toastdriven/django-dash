@@ -5,6 +5,8 @@
 __pycache__
 *.pyc
 
+.ruff_cache
+
 frontend/node_modules
 
 .env
