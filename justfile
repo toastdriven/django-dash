@@ -21,10 +21,13 @@ setup:
     cd frontend && \
     NODE_ENV='development' npm run dev
 
+# We double-up the `docker compose down`, because sometimes the network doesn't
+# go away on the first & that prevents the volume from being removed.
 @recreate-db:
-    docker compose stop db
+    docker compose down
+    docker compose down
     docker volume rm django-dash_postgres-data
-    docker compose run --rm web bash -c "createdb -U postgres -h db -p 5432 django-dash"
+    docker compose run --rm web bash -c "sleep 10 && createdb -U postgres -h db -p 5432 django-dash"
     docker compose run --rm web bash -c "pipenv run src/manage.py migrate"
 
 @console:

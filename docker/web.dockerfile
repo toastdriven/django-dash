@@ -50,7 +50,7 @@ FROM base AS dev
 # Extra development conveniences can be installed here. Examples are `git`,
 # `vim`, `postgresql-client`, etc. Anything to make working within the
 # containers nicer from a developer's standpoint.
-ENV OS_DEPENDENCIES="curl git vim"
+ENV OS_DEPENDENCIES="curl git vim postgresql-client"
 
 USER root
 
