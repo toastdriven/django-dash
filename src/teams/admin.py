@@ -32,16 +32,15 @@ class TeamMemberAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "team",
-        "competition",
         "is_deleted",
         "created",
     ]
     list_filter = [
-        "competition",
+        "competitions",
         "is_deleted",
     ]
     raw_id_fields = [
-        "competition",
+        "competitions",
         "team",
         "user",
     ]
@@ -49,7 +48,7 @@ class TeamMemberAdmin(admin.ModelAdmin):
         "user__username",
         "user__email",
         "team__name",
-        "competition__name",
+        "competitions__name",
     ]
 
 

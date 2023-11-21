@@ -108,7 +108,6 @@ class Result(models.Model):
     prizes = models.ManyToManyField(
         Prize,
         related_name="results",
-        on_delete=models.CASCADE,
     )
     # Denorm the score totals to save on queries for scoreboards.
     code_quality_score = models.DecimalField(

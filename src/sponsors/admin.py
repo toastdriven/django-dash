@@ -31,7 +31,6 @@ class PrizeAdmin(admin.ModelAdmin):
         "sponsor",
         "place",
         "competition",
-        "bio",
         "created",
     ]
     list_filter = [

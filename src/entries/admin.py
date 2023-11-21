@@ -11,7 +11,7 @@ class EntryAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "team",
-        "url",
+        "repository_url",
         "competition",
         "is_deleted",
         "created",

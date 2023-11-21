@@ -42,6 +42,7 @@ class Prize(models.Model):
     sponsor = models.ForeignKey(
         Sponsor,
         related_name="prizes",
+        on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=128)
     place = models.CharField(
