@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+p {
+  @apply mb-4;
+}
+
+a,
+a:hover,
+a:visited {
+  @apply underline text-sky-500;
+}
+
+.center-column {
+  @apply mx-auto md:w-1/2;
+}
+
+header {
+  a,
+  a:hover,
+  a:visited {
+    @apply text-neutral-100;
+  }
+}
+
+footer {
+  a,
+  a:hover,
+  a:visited {
+    @apply text-stone-200;
+  }
+}
+
+footer div a.toasty {
+  @apply text-amber-400;
+}

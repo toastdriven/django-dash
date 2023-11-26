@@ -8,6 +8,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@rollup/plugin-alias": "^5.1.0",
         "preact": "^10.13.1",
         "preact-iso": "^2.3.2",
         "preact-render-to-string": "^6.3.0"

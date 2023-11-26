@@ -1,18 +1,30 @@
 import { render } from 'preact';
 import { LocationProvider, Router, Route } from 'preact-iso';
 
-import { Header } from './components/Header.jsx';
-import { Home } from './pages/Home/index.jsx';
-import { NotFound } from './pages/_404.jsx';
+import { Home } from '@/pages/Home.jsx';
+import { Faq } from '@/pages/competitions/Faq.jsx';
+import { Rules } from '@/pages/competitions/Rules.jsx';
+import { Sponsors } from '@/pages/competitions/Sponsors.jsx';
+import { About } from '@/pages/competitions/About.jsx';
+import { NotFound } from '@/pages/_404.jsx';
+
 import './style.css';
 
 export function App() {
   return (
     <LocationProvider>
-      <Header />
       <main>
         <Router>
           <Route path="/" component={Home} />
+
+          <Route path="/faq/" component={Faq} />
+
+          <Route path="/:year/rules/" component={Rules} />
+          <Route path="/:year/sponsors/" component={Sponsors} />
+          <Route path="/:year/about/" component={About} />
+
+          {/* <Route path="/archive/:year/" component={Rules} /> */}
+
           <Route default component={NotFound} />
         </Router>
       </main>
