@@ -154,6 +154,6 @@ class ApiView(View):
         data = []
 
         for obj in objs:
-            data.append(self.serialize)
+            data.append(self.serialize(obj))
 
         return data
