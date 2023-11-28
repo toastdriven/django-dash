@@ -1,5 +1,6 @@
 from django.contrib.auth import (
     authenticate,
+    get_user_model,
     login,
     logout,
 )
@@ -8,6 +9,9 @@ from utils.api_tools import (
     ApiView,
     DataValidationError,
 )
+
+
+User = get_user_model()
 
 
 class LoginView(ApiView):
