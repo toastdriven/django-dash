@@ -38,11 +38,17 @@ class LoginView(ApiView):
 
 class SignUpView(ApiView):
     def post(self, request, *args, **kwargs):
+        # FIXME: Implement this!
+        # data = self.read_json(request)
+        # validated = self.validate(data)
         return self.render({})
 
 
 class ResetPasswordView(ApiView):
     def post(self, request, *args, **kwargs):
+        # FIXME: Implement this!
+        # data = self.read_json(request)
+        # validated = self.validate(data)
         return self.render({})
 
 
