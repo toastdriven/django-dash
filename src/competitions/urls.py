@@ -19,8 +19,8 @@ urlpatterns = [
     path(":pk/", CompetitionDetailView.as_view()),
     path(":pk/commits/", CompetitionCommitsView.as_view()),
     path(":pk/entries/", CompetitionEntriesView.as_view()),
-    path(":pk/entries/:pk/", CompetitionEntryDetailView.as_view()),
+    path(":pk/entries/:entry_pk/", CompetitionEntryDetailView.as_view()),
     path(":pk/sponsors/", CompetitionSponsorsView.as_view()),
     path(":pk/results/", CompetitionResultsView.as_view()),
-    path(":pk/results/:pk/", CompetitionResultDetailView.as_view()),
+    path(":pk/results/:result_pk/", CompetitionResultDetailView.as_view()),
 ]
