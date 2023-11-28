@@ -41,6 +41,9 @@ class Entry(models.Model):
 
     objects = ActiveEntryQuerySet.as_manager()
 
+    class Meta:
+        verbose_name_plural = "Entries"
+
     def __str__(self):
         return (
             f"{self.name} ({self.team.name}): {self.url} "
