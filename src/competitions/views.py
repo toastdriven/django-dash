@@ -1,4 +1,7 @@
-from utils.api_tools import ApiView
+from microapi import (
+    ApiView,
+    # ModelSerializer,
+)
 
 from entries.models import (
     Entry,
@@ -10,19 +13,7 @@ from .models import Competition
 
 class CompetitionsView(ApiView):
     def serialize(self, obj):
-        return {
-            "id": obj.id,
-            "name": obj.name,
-            "slug": obj.slug,
-            "signup_start_date": obj.signup_start_date,
-            "signup_end_date": obj.signup_end_date,
-            "contest_start_date": obj.contest_start_date,
-            "contest_end_date": obj.contest_end_date,
-            "judging_start_date": obj.judging_start_date,
-            "judging_end_date": obj.judging_end_date,
-            "created": obj.created,
-            "updated": obj.updated,
-        }
+        return self.serializer.to_dict(obj, exclude=["is_deleted"])
 
     def get(self, request):
         competitions = Competition.objects.active().order_by("-contest_start_date")
@@ -36,19 +27,7 @@ class CompetitionsView(ApiView):
 
 class LatestCompetitionView(ApiView):
     def serialize(self, obj):
-        return {
-            "id": obj.id,
-            "name": obj.name,
-            "slug": obj.slug,
-            "signup_start_date": obj.signup_start_date,
-            "signup_end_date": obj.signup_end_date,
-            "contest_start_date": obj.contest_start_date,
-            "contest_end_date": obj.contest_end_date,
-            "judging_start_date": obj.judging_start_date,
-            "judging_end_date": obj.judging_end_date,
-            "created": obj.created,
-            "updated": obj.updated,
-        }
+        return self.serializer.to_dict(obj, exclude=["is_deleted"])
 
     def get(self, request):
         competition = Competition.objects.active().latest("contest_start_date")
@@ -62,22 +41,10 @@ class LatestCompetitionView(ApiView):
 
 class CompetitionDetailView(ApiView):
     def serialize(self, obj):
-        return {
-            "id": obj.id,
-            "name": obj.name,
-            "slug": obj.slug,
-            "signup_start_date": obj.signup_start_date,
-            "signup_end_date": obj.signup_end_date,
-            "contest_start_date": obj.contest_start_date,
-            "contest_end_date": obj.contest_end_date,
-            "judging_start_date": obj.judging_start_date,
-            "judging_end_date": obj.judging_end_date,
-            "created": obj.created,
-            "updated": obj.updated,
-        }
+        return self.serializer.to_dict(obj, exclude=["is_deleted"])
 
     def get(self, request, pk):
-        competition = Competition.objects.active().filter(pk=pk)
+        competition = Competition.objects.active().get(pk=pk)
         return self.render(
             {
                 "success": True,
@@ -87,23 +54,23 @@ class CompetitionDetailView(ApiView):
 
 
 class CompetitionCommitsView(ApiView):
-    def serialize(self, obj):
-        return {
-            "id": obj.id,
-            # FIXME: Fix serialization.
-            "entry": obj.entry,
-            # FIXME: Fix serialization.
-            "committer": obj.committer,
-            "gravatar": obj.gravatar,
-            "commit_id": obj.commit_id,
-            "email": obj.email,
-            "message": obj.message,
-            "short_message": obj.short_message(),
-            "created": obj.created,
-        }
+    # def serialize(self, obj):
+    #     return {
+    #         "id": obj.id,
+    #         # FIXME: Fix serialization.
+    #         "entry": obj.entry,
+    #         # FIXME: Fix serialization.
+    #         "committer": obj.committer,
+    #         "gravatar": obj.gravatar,
+    #         "commit_id": obj.commit_id,
+    #         "email": obj.email,
+    #         "message": obj.message,
+    #         "short_message": obj.short_message(),
+    #         "created": obj.created,
+    #     }
 
     def get(self, request, pk):
-        competition = Competition.objects.active().filter(pk=pk)
+        competition = Competition.objects.active().get(pk=pk)
         commits = Commit.objects.filter(entry__competition=competition).order_by(
             "-created"
         )[:30]
