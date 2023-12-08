@@ -1,7 +1,10 @@
+from django.contrib.auth.decorators import login_required
+
 from microapi import (
     ApiView,
     # ModelSerializer,
 )
+from microapi import http
 
 from entries.models import (
     Entry,
@@ -109,6 +112,10 @@ class CompetitionEntriesView(ApiView):
             }
         )
 
+    @login_required
+    def post(self, request, pk):
+        return self.render({}, status_code=http.CREATED)
+
 
 class CompetitionEntryDetailView(ApiView):
     def serialize(self, obj):
@@ -134,6 +141,14 @@ class CompetitionEntryDetailView(ApiView):
                 "entry": self.serialize(entry),
             }
         )
+
+    @login_required
+    def put(self, request, pk):
+        return self.render({}, status_code=http.ACCEPTED)
+
+    @login_required
+    def delete(self, request, pk):
+        return self.render({}, status_code=http.NO_CONTENT)
 
 
 class CompetitionSponsorsView(ApiView):

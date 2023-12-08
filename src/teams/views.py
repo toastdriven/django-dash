@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 
 from microapi import ApiView
+from microapi import http
 
 from .models import (
     Team,
@@ -61,6 +62,25 @@ class TeamsView(ApiView):
             }
         )
 
+    @login_required
+    def post(self, request):
+        data = self.read_json(request)
+
+        # TODO: Needs validation/uniqueness here.
+
+        team = Team.objects.create(
+            name=data["name"],
+            owner=request.user,
+        )
+
+        return self.render(
+            {
+                "success": True,
+                "team": self.serialize(team),
+            },
+            status_code=http.CREATED,
+        )
+
 
 class TeamDetailView(ApiView):
     def serialize(self, obj):
@@ -74,6 +94,14 @@ class TeamDetailView(ApiView):
                 "team": self.serialize(team),
             }
         )
+
+    @login_required
+    def put(self, request, pk):
+        return self.render({}, status_code=http.ACCEPTED)
+
+    @login_required
+    def delete(self, request, pk):
+        return self.render({}, status_code=http.NO_CONTENT)
 
 
 class TeamMembersView(ApiView):
@@ -89,6 +117,10 @@ class TeamMembersView(ApiView):
             }
         )
 
+    @login_required
+    def post(self, request, pk):
+        return self.render({}, status_code=http.CREATED)
+
 
 class TeamMemberDetailView(ApiView):
     def get(self, request, pk, member_pk):
@@ -101,14 +133,30 @@ class TeamMemberDetailView(ApiView):
             }
         )
 
+    @login_required
+    def put(self, request, pk):
+        return self.render({}, status_code=http.ACCEPTED)
+
+    @login_required
+    def delete(self, request, pk):
+        return self.render({}, status_code=http.NO_CONTENT)
+
 
 class TeamInvitesView(ApiView):
     @login_required
     def get(self, request):
         return self.render({})
 
+    @login_required
+    def post(self, request, pk):
+        return self.render({}, status_code=http.CREATED)
+
 
 class TeamInviteDetailView(ApiView):
     @login_required
     def get(self, request):
         return self.render({})
+
+    @login_required
+    def post(self, request, pk):
+        return self.render({}, status_code=http.CREATED)
