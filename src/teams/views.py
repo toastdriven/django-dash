@@ -1,31 +1,114 @@
+from django.contrib.auth.decorators import login_required
+
 from microapi import ApiView
+
+from .models import (
+    Team,
+    # TeamMember,
+)
+
+
+def serialize_comp(comp):
+    return {
+        "id": comp.pk,
+        "name": comp.name,
+        "slug": comp.slug,
+    }
+
+
+def serialize_user(user):
+    return {
+        "id": user.pk,
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
+
+
+def serialize_team_member(serializer, member):
+    member_data = serializer.to_dict(member, exclude=["is_deleted"])
+    member_data["user"] = serialize_user(member.user)
+    member_data["competitions"] = []
+
+    for comp in member.competitions.all():
+        member_data["competitions"].append(serialize_comp(comp))
+
+    return member_data
+
+
+def serialize_team(serializer, team):
+    data = serializer.to_dict(team, exclude=["is_deleted"])
+    data["owner"] = serialize_user(team.owner)
+    data["members"] = []
+
+    for member in team.members.all():
+        data["members"].append(serialize_team_member(serializer, member))
+
+    return data
 
 
 class TeamsView(ApiView):
+    def serialize(self, obj):
+        return serialize_team(self.serializer, obj)
+
     def get(self, request):
-        return self.render({})
+        teams = Team.objects.active().order_by("-created")
+        return self.render(
+            {
+                "success": True,
+                "teams": self.serialize_many(teams),
+            }
+        )
 
 
 class TeamDetailView(ApiView):
-    def get(self, request):
-        return self.render({})
+    def serialize(self, obj):
+        return serialize_team(self.serializer, obj)
+
+    def get(self, request, pk):
+        team = Team.objects.active().get(pk=pk)
+        return self.render(
+            {
+                "success": True,
+                "team": self.serialize(team),
+            }
+        )
 
 
 class TeamMembersView(ApiView):
-    def get(self, request):
-        return self.render({})
+    def get(self, request, pk):
+        team = Team.objects.active().get(pk=pk)
+        members = team.members.all().active()
+        return self.render(
+            {
+                "success": True,
+                "team_members": [
+                    serialize_team_member(self.serializer, member) for member in members
+                ],
+            }
+        )
 
 
 class TeamMemberDetailView(ApiView):
-    def get(self, request):
-        return self.render({})
+    def get(self, request, pk, member_pk):
+        team = Team.objects.active().get(pk=pk)
+        member = team.members.get(pk=member_pk)
+        return self.render(
+            {
+                "success": True,
+                "team_member": serialize_team_member(self.serializer, member),
+            }
+        )
 
 
 class TeamInvitesView(ApiView):
+    @login_required
     def get(self, request):
         return self.render({})
 
 
 class TeamInviteDetailView(ApiView):
+    @login_required
     def get(self, request):
         return self.render({})
