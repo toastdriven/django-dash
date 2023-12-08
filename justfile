@@ -29,6 +29,7 @@ setup:
     docker volume rm django-dash_postgres-data
     docker compose run --rm web bash -c "sleep 10 && createdb -U postgres -h db -p 5432 django-dash"
     docker compose run --rm web bash -c "pipenv run src/manage.py migrate"
+    docker compose run --rm web bash -c "pipenv run src/manage.py createsuperuser"
 
 @console:
     docker compose run --rm web bash
