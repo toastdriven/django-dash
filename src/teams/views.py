@@ -1,4 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.utils.text import slugify
 
 from microapi import ApiView
 from microapi import http
@@ -9,7 +11,21 @@ from .models import (
 )
 
 
+User = get_user_model()
+
+
 def serialize_comp(comp):
+    """
+    A light serialization of Competition for deep relations.
+
+    Just the unique data, for further lookups if needed.
+
+    Args:
+        comp (Competition): The competition to serialize.
+
+    Returns:
+        dict: The serialized competition data.
+    """
     return {
         "id": comp.pk,
         "name": comp.name,
@@ -18,6 +34,15 @@ def serialize_comp(comp):
 
 
 def serialize_user(user):
+    """
+    A light serialization of User for deep relations.
+
+    Args:
+        user (User): The user to serialize.
+
+    Returns:
+        dict: The serialized user data.
+    """
     return {
         "id": user.pk,
         "username": user.username,
@@ -28,6 +53,16 @@ def serialize_user(user):
 
 
 def serialize_team_member(serializer, member):
+    """
+    A serilization of TeamMember.
+
+    Args:
+        serializer (ModelSerializer): The serializer to use.
+        member (TeamMember): The team member to serialize.
+
+    Returns:
+        dict: The serialized team member data.
+    """
     member_data = serializer.to_dict(member, exclude=["is_deleted"])
     member_data["user"] = serialize_user(member.user)
     member_data["competitions"] = []
@@ -39,6 +74,16 @@ def serialize_team_member(serializer, member):
 
 
 def serialize_team(serializer, team):
+    """
+    A serilization of Team.
+
+    Args:
+        serializer (ModelSerializer): The serializer to use.
+        team (Team): The team to serialize.
+
+    Returns:
+        dict: The serialized team data.
+    """
     data = serializer.to_dict(team, exclude=["is_deleted"])
     data["owner"] = serialize_user(team.owner)
     data["members"] = []
@@ -66,13 +111,20 @@ class TeamsView(ApiView):
     def post(self, request):
         data = self.read_json(request)
 
-        # TODO: Needs validation/uniqueness here.
+        if not data.get("name", ""):
+            return self.render_error(
+                "No team name provided.", status_code=http.BAD_REQUEST
+            )
+
+        if Team.objects.is_name_taken(data["name"]):
+            return self.render_error(
+                "Team name is already taken.", status_code=http.BAD_REQUEST
+            )
 
         team = Team.objects.create(
             name=data["name"],
             owner=request.user,
         )
-
         return self.render(
             {
                 "success": True,
@@ -97,10 +149,55 @@ class TeamDetailView(ApiView):
 
     @login_required
     def put(self, request, pk):
-        return self.render({}, status_code=http.ACCEPTED)
+        data = self.read_json(request)
+
+        try:
+            team = Team.objects.get(pk=pk)
+        except Team.DoesNotExist:
+            return self.render_error("No team found.", status_code=http.NOT_FOUND)
+
+        # They must currently own the team to make changes.
+        if team.owner != request.user:
+            return self.render_error("No team found.", status_code=http.NOT_FOUND)
+
+        # If they're supplying a new name, it must not be blank and must not be
+        # already taken.
+        if data.get("name") and data.get("name") != team.name:
+            if Team.objects.is_name_taken(data["name"]):
+                return self.render_error(
+                    "Name is already taken.", status_code=http.BAD_REQUEST
+                )
+
+            team.name = data["name"]
+            team.slug = slugify(data["name"])
+
+        if data.get("owner"):
+            try:
+                new_owner = User.objects.get(username=data["username"])
+            except User.DoesNotExist:
+                return self.render_error(
+                    "New owner not found.", status_code=http.BAD_REQUEST
+                )
+
+            team.owner = new_owner
+
+        team.save()
+        return self.render(
+            {
+                "success": True,
+                "team": self.serialize(team),
+            },
+            status_code=http.ACCEPTED,
+        )
 
     @login_required
     def delete(self, request, pk):
+        try:
+            team = Team.objects.filter(owner=request.user).get(pk=pk)
+        except Team.DoesNotExist:
+            return self.render_error("No team found.", status_code=http.NOT_FOUND)
+
+        team.delete()
         return self.render({}, status_code=http.NO_CONTENT)
 
 
@@ -119,7 +216,29 @@ class TeamMembersView(ApiView):
 
     @login_required
     def post(self, request, pk):
-        return self.render({}, status_code=http.CREATED)
+        data = self.read_json(request)
+
+        if not data.get("name", ""):
+            return self.render_error(
+                "No team name provided.", status_code=http.BAD_REQUEST
+            )
+
+        if Team.objects.filter(slug=slugify(data["name"])).exists():
+            return self.render_error(
+                "Team name is already taken.", status_code=http.BAD_REQUEST
+            )
+
+        team = Team.objects.create(
+            name=data["name"],
+            owner=request.user,
+        )
+        return self.render(
+            {
+                "success": True,
+                "team": self.serialize(team),
+            },
+            status_code=http.CREATED,
+        )
 
 
 class TeamMemberDetailView(ApiView):
