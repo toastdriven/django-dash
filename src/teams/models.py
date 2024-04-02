@@ -9,8 +9,19 @@ from utils.querysets import ActiveQuerySet
 User = get_user_model()
 
 
-class ActiveTeamQuerySet(ActiveQuerySet):
-    pass
+class ActiveTeamManager(models.Manager):
+    def is_name_taken(self, name):
+        """
+        Checks the availability of a team name.
+
+        Args:
+            name (str): The desired new name.
+
+        Returns:
+            bool: `True` if available, otherwise `False`.
+        """
+        new_slug = slugify(name)
+        return Team.objects.filter(slug=new_slug).exists()
 
 
 class ActiveTeamMemberQuerySet(ActiveQuerySet):
@@ -29,7 +40,7 @@ class Team(models.Model):
     updated = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
 
-    objects = ActiveTeamQuerySet.as_manager()
+    objects = ActiveTeamManager.from_queryset(ActiveQuerySet)()
 
     def __str__(self):
         return f"{self.name}"
