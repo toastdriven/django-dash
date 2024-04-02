@@ -32,8 +32,8 @@ export function CodeOfConduct({ ...props }) {
           </p>
 
           <p>
-            These rules apply to all aspects of the Dash,
-            including but not limited to: user profiles, team information, the
+            These rules apply to <strong>ALL</strong> aspects of the Dash,
+            including but <i>not limited to</i>: user profiles, team information, the
             entries themselves, and communications on Discord. For clarity, the
             basic rules are repeated here:
           </p>
@@ -41,12 +41,12 @@ export function CodeOfConduct({ ...props }) {
           <ol
             class="block list-decimal ml-8 mb-8"
           >
-            <li>Be friendly and patient.</li>
-            <li>Be welcoming.</li>
-            <li>Be considerate.</li>
-            <li>Be respectful.</li>
-            <li>Be careful in the words that you choose.</li>
-            <li>When we disagree, try to understand why.</li>
+            <li class="font-bold">Be friendly and patient.</li>
+            <li class="font-bold">Be welcoming.</li>
+            <li class="font-bold">Be considerate.</li>
+            <li class="font-bold">Be respectful.</li>
+            <li class="font-bold">Be careful in the words that you choose.</li>
+            <li class="font-bold">When we disagree, try to understand why.</li>
           </ol>
 
           <p>
