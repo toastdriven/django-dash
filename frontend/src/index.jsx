@@ -2,6 +2,7 @@ import { render } from 'preact';
 import { LocationProvider, Router, Route } from 'preact-iso';
 
 import { Home } from '@/pages/Home.jsx';
+import { CodeOfConduct } from '@/pages/competitions/CodeOfConduct.jsx';
 import { Faq } from '@/pages/competitions/Faq.jsx';
 import { Rules } from '@/pages/competitions/Rules.jsx';
 import { Sponsors } from '@/pages/competitions/Sponsors.jsx';
@@ -18,6 +19,7 @@ export function App() {
           <Route path="/" component={Home} />
 
           <Route path="/faq/" component={Faq} />
+          <Route path="/code-of-conduct/" component={CodeOfConduct} />
 
           <Route path="/:year/rules/" component={Rules} />
           <Route path="/:year/sponsors/" component={Sponsors} />

@@ -8,7 +8,7 @@ export function Footer({ ...props }) {
         class="center-column text-stone-200 text-sm"
       >
         <nav
-          class="mb-4 grid grid-cols-4 gap-4"
+          class="mb-4 grid grid-cols-3 gap-4"
         >
           <div>
             <dl>
@@ -17,19 +17,19 @@ export function Footer({ ...props }) {
                 <a href="/">Home</a>
               </dd>
               <dd>
+                <a href={`/${currentYear}/about/`}>About</a>
+              </dd>
+              <dd>
                 <a href={`/${currentYear}/rules/`}>Rules</a>
               </dd>
               <dd>
-                <a href={`/${currentYear}/sponsors/`}>Sponsors</a>
-              </dd>
-              <dd>
-                <a href={`/${currentYear}/about/`}>About</a>
+                <a href={`/code-of-conduct/`}>Code Of Conduct</a>
               </dd>
               <dd>
                 <a href={`/faq/`}>FAQ</a>
               </dd>
               <dd>
-                <a href="https://github.com/toastdriven/django-dash">Source on GitHub</a>
+                <a href={`/${currentYear}/sponsors/`}>Sponsors</a>
               </dd>
             </dl>
           </div>
@@ -59,29 +59,37 @@ export function Footer({ ...props }) {
           </div>
 
           <div>
-
-          </div>
-
-          <div>
             <dl>
               <dt class="font-bold text-base mb-2">Social</dt>
               <dd>
-                <a rel="me" href="https://hachyderm.io/@djangodash">Mastodon</a>
+                Updates on <a rel="me" href="https://hachyderm.io/@djangodash">Mastodon</a>
+              </dd>
+              <dd>
+                Chat on <a href="https://discord.gg/t3bB38QXv3">Discord</a>
+              </dd>
+              <dd>
+                <a href="https://github.com/toastdriven/django-dash">Source on GitHub</a>
               </dd>
             </dl>
           </div>
         </nav>
 
         <div
-          class="mb-4 flex flex-row gap-2"
+          class="mb-8 flex flex-row gap-2"
         >
           {/* FIXME: Sponsor Logos! */}
+          <dl>
+            <dt class="font-bold text-base mb-2">Sponsors</dt>
+            <dd>
+
+            </dd>
+          </dl>
         </div>
 
         <div
           class="text-center"
         >
-          <div class="mb-2">
+          <div class="mb-2 italic">
             Copyright 2008&mdash;{currentYear}
           </div>
 
