@@ -24,11 +24,11 @@ export function Header({ ...props }) {
         <div
           class="text-right mt-6"
         >
-          <span>
+          {/* <span>
             <a href="/login/">Login</a>{' '}
             ...or...{' '}
             <a href="/signup/">Sign Up</a>
-          </span>
+          </span> */}
         </div>
       </div>
     </header>

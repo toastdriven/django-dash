@@ -81,7 +81,7 @@ export function Footer({ ...props }) {
           <dl>
             <dt class="font-bold text-base mb-2">Sponsors</dt>
             <dd>
-
+              <i>Coming soon...</i>
             </dd>
           </dl>
         </div>
