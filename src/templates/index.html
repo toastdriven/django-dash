@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <!-- FIXME: This needs to be DTL-ified! -->
@@ -7,16 +8,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="color-scheme" content="light dark" />
         <title>Django Dash</title>
+        <script type="module" crossorigin src="{% static 'assets/index-c3b76db2.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'assets/index-e2c6a44d.css' %}">
     </head>
 
-    <body class="mx-auto my-8 md:w-1/2">
+    <body class="bg-stone-600">
         <div id="app"></div>
 
-        <div>
-            Updates on <a rel="me" href="https://hachyderm.io/@djangodash">Mastodon</a>
-        </div>
-
-        <!-- FIXME: Load the actual build JS. -->
-        <script type="module" src="/src/index.jsx"></script>
     </body>
 </html>

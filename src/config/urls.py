@@ -14,10 +14,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
+from django.views.generic.base import TemplateView
+
+
+class HomeView(TemplateView):
+    template_name = "index.html"
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     # path("", include("teams.urls")),
+    path("", HomeView.as_view()),
 ]
+
+# Not proud of this, but need to launch sooner rather than later.
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
