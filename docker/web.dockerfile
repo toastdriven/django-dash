@@ -1,12 +1,13 @@
 # ====
 # Base
 # ====
-FROM python:3.11-slim as base
+FROM python:3.13-slim AS base
 
+ENV PATH=/home/code/venv/bin:$PATH:.
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PYTHONDONTWRITEBYTECODE=true
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/home/code/src
-ENV PIPENV_VENV_IN_PROJECT=true
 
 ENV OS_DEPENDENCIES="curl"
 
@@ -15,7 +16,7 @@ RUN apt-get update && \
     && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install pipenv
+RUN pip install --upgrade pip uv
 
 RUN mkdir -p /home/code/src
 
@@ -24,14 +25,16 @@ RUN useradd django --group=staff --create-home --shell /bin/bash && \
 
 USER django
 
+RUN python -m uv venv /home/code/venv
+
 WORKDIR /home/code
 
-COPY --chown=django:staff ./Pipfile /home/code/Pipfile
-COPY --chown=django:staff ./Pipfile.lock /home/code/Pipfile.lock
+COPY --chown=django:staff pyproject.toml /home/code/pyproject.toml
+COPY --chown=django:staff uv.lock /home/code/uv.lock
 
 # Since this image gets re-used for other things, install *only* the main
 # dependencies.
-RUN pipenv sync
+RUN uv sync --no-dev
 
 # For this stage, for best re-use, we copy over the code instead of mounting it
 # w/ a volume.
@@ -62,12 +65,12 @@ RUN apt-get update && \
 
 USER django
 
-COPY --chown=django:staff ./Pipfile /home/code/Pipfile
-COPY --chown=django:staff ./Pipfile.lock /home/code/Pipfile.lock
+COPY --chown=django:staff pyproject.toml /home/code/pyproject.toml
+COPY --chown=django:staff uv.lock /home/code/uv.lock
 
 # Since we're building off the already-constructed base image, all we need are
 # the extra development dependencies.
-RUN pipenv sync --dev
+RUN uv sync
 
 # It's not explicitly here, but we're also going to live-mount the user's
 # `/src` directory into `/home/code/src` as a Docker Volume, so that their
@@ -75,7 +78,7 @@ RUN pipenv sync --dev
 
 EXPOSE 8000
 
-CMD [ "pipenv", "run", "python", "src/manage.py", "runserver", "0.0.0.0:8000" ]
+CMD [ "uv", "run", "python", "src/manage.py", "runserver", "0.0.0.0:8000" ]
 
 
 # ==========
@@ -85,12 +88,13 @@ CMD [ "pipenv", "run", "python", "src/manage.py", "runserver", "0.0.0.0:8000" ]
 # We rebuild from scratch here, so that we don't pick up anything "extra" that
 # was installed into the `dev` image, and so that the production image is as
 # small/clean as possible.
-FROM python:3.11-slim as prod
+FROM python:3.13-slim AS prod
 
+ENV PATH=/home/code/venv/bin:$PATH:.
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PYTHONDONTWRITEBYTECODE=true
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/home/code/src
-ENV PIPENV_VENV_IN_PROJECT=true
 
 ENV OS_DEPENDENCIES="curl"
 
@@ -101,27 +105,33 @@ RUN apt-get update && \
     && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install pipenv
+RUN pip install --upgrade pip uv
 
-RUN mkdir -p /home/code/src
+RUN mkdir -p /home/code/src && \
+    mkdir -p /home/code/static && \
+    mkdir -p /home/code/tmp
 
 RUN useradd django --group=staff --create-home --shell /bin/bash && \
     chown -R django:staff /home/code
 
 USER django
 
+RUN python -m uv venv /home/code/venv
+
 WORKDIR /home/code
 
 # Copy over the pre-built dependencies, for fastest build times.
-COPY --from=base --chown=django:staff /home/code/.venv /home/code/.venv
-COPY --from=base --chown=django:staff /home/code/Pipfile /home/code/Pipfile
-COPY --from=base --chown=django:staff /home/code/Pipfile.lock /home/code/Pipfile.lock
+COPY --from=base --chown=django:staff /home/code/venv /home/code/venv
+COPY --from=base --chown=django:staff /home/code/pyproject.toml /home/code/pyproject.toml
+COPY --from=base --chown=django:staff /home/code/uv.lock /home/code/uv.lock
 
 # Here, we're pulling in the production gunicorn config.
 COPY --chown=django:staff ./docker/gunicorn.conf.py /home/code/gunicorn.conf.py
 COPY --chown=django:staff ./src/ /home/code/src/
 
+COPY --chown=django:staff ./frontend/dist/ /home/code/static/
+
 EXPOSE 8000
 
 # Go, little image, go!
-CMD [ "pipenv", "run", "gunicorn", "-c", "gunicorn.conf.py", "config.wsgi:application" ]
+CMD [ "uv", "run", "gunicorn", "--worker-tmp-dir", "/home/code/tmp", "-c", "gunicorn.conf.py", "config.wsgi:application" ]

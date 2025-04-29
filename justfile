@@ -28,23 +28,26 @@ setup:
     docker compose down
     docker volume rm django-dash_postgres-data
     docker compose run --rm web bash -c "sleep 10 && createdb -U postgres -h db -p 5432 django-dash"
-    docker compose run --rm web bash -c "pipenv run src/manage.py migrate"
+    docker compose run --rm web bash -c "uv run python src/manage.py migrate"
 
 @console:
     docker compose run --rm web bash
 
 @djshell:
-    docker compose run --rm web bash -c "pipenv run src/manage.py shell"
+    docker compose run --rm web bash -c "uv run python src/manage.py shell"
 
 @add-dep depName:
-    docker compose run --rm web bash -c "pipenv install {{depName}}"
+    docker compose run --rm web bash -c "uv add {{depName}}"
 
 @migrate:
-    docker compose run --rm web bash -c "pipenv run src/manage.py migrate"
+    docker compose run --rm web bash -c "uv run python src/manage.py migrate"
 
 @test:
-    docker compose run --rm web bash -c "pipenv run pytest -vv src"
+    docker compose run --rm web bash -c "uv run python pytest -vv src"
 
 @interactive_server:
     docker compose stop web
-    docker compose run --service-ports --use-aliases web bash -c "pipenv run src/manage.py runserver 0.0.0.0:8000"
+    docker compose run --service-ports --use-aliases web bash -c "uv run python src/manage.py runserver 0.0.0.0:8000"
+
+@pylock:
+    uv export -o pylock.toml

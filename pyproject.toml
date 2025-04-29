@@ -1,0 +1,20 @@
+[project]
+name = "django-dash"
+version = "0.1.0"
+description = "The code that powers the Django Dash."
+readme = "README.md"
+requires-python = ">=3.13.3"
+dependencies = [
+    "dj-database-url>=2.3.0",
+    "django>=5.2",
+    "django-microapi>=1.2.1",
+    "environs>=14.1.1",
+    "gunicorn>=23.0.0",
+    "psycopg[binary]>=3.2.6",
+    "redis[hiredis]>=5.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
